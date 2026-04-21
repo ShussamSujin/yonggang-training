@@ -105,6 +105,94 @@
 
 <main class="pt-24 px-6 max-w-7xl mx-auto space-y-8">
 
+  <!-- Reservation Time Slot Manager -->
+  <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="bg-primary-container p-2 rounded-lg">
+        <span class="material-symbols-outlined text-3xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">calendar_clock</span>
+      </div>
+      <div>
+        <h3 class="text-lg font-extrabold text-on-surface">예약 시간 직접 추가</h3>
+        <p class="text-sm text-on-surface-variant font-medium">고객에게 노출될 예약 가능 날짜·시간을 등록하세요.</p>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-3 mb-5">
+      <input id="slot-date" type="date" class="bg-surface-container-high border-none rounded-xl px-4 py-3 font-semibold text-sm focus:ring-2 focus:ring-primary-fixed-dim transition-all"/>
+      <div class="flex items-center gap-2 bg-surface-container-high rounded-xl px-4 py-3">
+        <select id="slot-hour" class="bg-transparent border-none font-bold text-sm focus:outline-none">
+        </select>
+        <span class="font-bold text-on-surface-variant">:</span>
+        <select id="slot-min" class="bg-transparent border-none font-bold text-sm focus:outline-none">
+        </select>
+      </div>
+      <button onclick="addTimeSlot()" class="px-6 py-3 bg-primary text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">add</span>추가
+      </button>
+    </div>
+    <div id="time-slots-list" class="space-y-2"></div>
+  </section>
+
+  <!-- Blocked Time Manager -->
+  <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="bg-error-container p-2 rounded-lg">
+        <span class="material-symbols-outlined text-3xl text-on-error-container" style="font-variation-settings: 'FILL' 1;">event_busy</span>
+      </div>
+      <div>
+        <h3 class="text-lg font-extrabold text-on-surface">예약 불가 시간 설정</h3>
+        <p class="text-sm text-on-surface-variant font-medium">특정 날짜·시간대를 예약 불가로 지정하세요.</p>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-3 mb-4">
+      <input id="block-date" type="date" class="bg-surface-container-high border-none rounded-xl px-4 py-3 font-semibold text-sm focus:ring-2 focus:ring-primary-fixed-dim transition-all"/>
+      <label class="flex items-center gap-2 bg-surface-container-high rounded-xl px-4 py-3 cursor-pointer select-none">
+        <input id="block-allday" type="checkbox" class="w-4 h-4 accent-primary" onchange="toggleBlockTime()"/>
+        <span class="font-bold text-sm">하루 종일</span>
+      </label>
+    </div>
+    <div id="block-time-range" class="flex flex-wrap gap-3 mb-4">
+      <div class="flex items-center gap-2 bg-surface-container-high rounded-xl px-4 py-3">
+        <span class="text-xs font-bold text-on-surface-variant">시작</span>
+        <select id="block-start-hour" class="bg-transparent border-none font-bold text-sm focus:outline-none"></select>
+        <span class="font-bold text-on-surface-variant">:</span>
+        <select id="block-start-min" class="bg-transparent border-none font-bold text-sm focus:outline-none"></select>
+      </div>
+      <div class="flex items-center gap-2 bg-surface-container-high rounded-xl px-4 py-3">
+        <span class="text-xs font-bold text-on-surface-variant">종료</span>
+        <select id="block-end-hour" class="bg-transparent border-none font-bold text-sm focus:outline-none"></select>
+        <span class="font-bold text-on-surface-variant">:</span>
+        <select id="block-end-min" class="bg-transparent border-none font-bold text-sm focus:outline-none"></select>
+      </div>
+      <button onclick="addBlockedTime()" class="px-6 py-3 bg-error text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">block</span>불가 설정
+      </button>
+    </div>
+    <div id="block-allday-btn" class="hidden mb-4">
+      <button onclick="addBlockedTime()" class="px-6 py-3 bg-error text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">block</span>하루 종일 불가 설정
+      </button>
+    </div>
+    <div id="blocked-times-list" class="space-y-2"></div>
+
+    <!-- 오늘 휴무 빠른 설정 -->
+    <div class="mt-5 pt-5 border-t border-outline-variant flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+      <div>
+        <p class="font-bold text-sm text-on-surface">오늘 하루 휴무 공지</p>
+        <p class="text-xs text-on-surface-variant mt-0.5">고객 화면에 휴무 안내 문구가 표시되고 예약이 전부 차단됩니다.</p>
+      </div>
+      <div class="flex gap-2">
+        <button id="btn-close-today" onclick="setTodayClose(true)"
+          class="px-5 py-2.5 bg-error text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">storefront_off</span>오늘 휴무 설정
+        </button>
+        <button id="btn-open-today" onclick="setTodayClose(false)"
+          class="hidden px-5 py-2.5 bg-surface-container-high text-on-surface font-bold rounded-xl active:scale-95 transition-transform flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">storefront</span>휴무 해제
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- Estimated Delivery Time Setter -->
   <section class="bg-primary-container p-6 rounded-xl shadow-md border border-primary/20">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -122,6 +210,7 @@
         <button class="time-btn flex-none px-4 py-2.5 bg-white text-primary font-bold rounded-lg shadow-sm border-2 border-transparent hover:border-primary transition-all" data-time="30-40분" onclick="setDeliveryTime('30-40분')">30-40분</button>
         <button class="time-btn flex-none px-4 py-2.5 bg-white text-primary font-bold rounded-lg shadow-sm border-2 border-transparent hover:border-primary transition-all" data-time="40-50분" onclick="setDeliveryTime('40-50분')">40-50분</button>
         <button class="time-btn flex-none px-4 py-2.5 bg-white text-primary font-bold rounded-lg shadow-sm border-2 border-transparent hover:border-primary transition-all" data-time="50-60분" onclick="setDeliveryTime('50-60분')">50-60분</button>
+        <button class="time-btn flex-none px-4 py-2.5 bg-white text-primary font-bold rounded-lg shadow-sm border-2 border-transparent hover:border-primary transition-all" data-time="1시간 이상" onclick="setDeliveryTime('1시간 이상')">1시간 이상</button>
       </div>
     </div>
   </section>
@@ -146,6 +235,27 @@
       <h2 class="text-5xl font-extrabold text-on-primary-container"><span id="stat-count">0</span><span class="text-xl ml-1">건</span></h2>
       <p class="mt-2 text-on-primary-container/70 text-sm">누적 주문 수</p>
     </div>
+  </section>
+
+  <!-- Sales Dashboard -->
+  <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="bg-primary-container p-2 rounded-lg">
+        <span class="material-symbols-outlined text-3xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+      </div>
+      <div>
+        <h3 class="text-lg font-extrabold text-on-surface">매출 대시보드</h3>
+        <p class="text-sm text-on-surface-variant font-medium">일별·월별 매출을 한눈에 확인하세요.</p>
+      </div>
+    </div>
+    <!-- Sales tabs -->
+    <div class="flex gap-2 mb-6">
+      <button id="sales-tab-daily" onclick="switchSalesTab('daily')"
+        class="px-5 py-2 rounded-full bg-primary text-white font-bold text-sm">일별 매출</button>
+      <button id="sales-tab-monthly" onclick="switchSalesTab('monthly')"
+        class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-bold text-sm hover:bg-surface-container-highest transition-colors">월별 매출</button>
+    </div>
+    <div id="sales-content"></div>
   </section>
 
   <!-- Real-time Status Tabs -->
@@ -360,12 +470,37 @@ function renderOrderCards() {
   }).join('');
 }
 
+function markPaid(id) {
+  const orders = getOrders();
+  const idx = orders.findIndex(o => o.id === id);
+  if (idx < 0) return;
+  orders[idx].paid = true;
+  saveOrders(orders);
+  showToast(`${orders[idx].customer} 고객님 결제 완료!`);
+  renderOrderCards();
+}
+
 function getActionButtons(order) {
   if (order.status === 'new') {
+    if (!order.paid) {
+      return `
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="rejectOrder('${order.id}')" class="py-3 bg-surface-container-high text-on-surface font-bold rounded-xl active:scale-95 transition-transform hover:bg-error-container">거절</button>
+          <button onclick="markPaid('${order.id}')" class="py-3 bg-primary-container text-on-primary-container font-bold rounded-xl active:scale-95 transition-transform hover:opacity-90 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-base">payments</span>결제 완료
+          </button>
+        </div>`;
+    }
     return `
-      <div class="grid grid-cols-2 gap-3">
-        <button onclick="rejectOrder('${order.id}')" class="py-3 bg-surface-container-high text-on-surface font-bold rounded-xl active:scale-95 transition-transform hover:bg-error-container">거절</button>
-        <button onclick="acceptOrder('${order.id}')" class="py-3 bg-primary text-white font-bold rounded-xl active:scale-95 transition-transform hover:opacity-90">주문 접수</button>
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 px-3 py-2 bg-primary-container/30 rounded-lg">
+          <span class="material-symbols-outlined text-base text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span>
+          <span class="text-xs font-bold text-primary">결제 완료</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="rejectOrder('${order.id}')" class="py-3 bg-surface-container-high text-on-surface font-bold rounded-xl active:scale-95 transition-transform hover:bg-error-container">거절</button>
+          <button onclick="acceptOrder('${order.id}')" class="py-3 bg-primary text-white font-bold rounded-xl active:scale-95 transition-transform hover:opacity-90">주문 접수</button>
+        </div>
       </div>`;
   }
   if (order.status === 'cooking') {
@@ -538,12 +673,336 @@ function checkNewOrders() {
   prevNewCount = newCount;
 }
 
+// === TODAY CLOSE ===
+function setTodayClose(closed) {
+  const today = new Date().toISOString().split('T')[0];
+  if (closed) {
+    localStorage.setItem('jw_closed_date', today);
+    showToast('오늘 휴무로 설정됐습니다.');
+  } else {
+    localStorage.removeItem('jw_closed_date');
+    showToast('휴무가 해제됐습니다.', 'warn');
+  }
+  updateCloseBtns();
+}
+
+function updateCloseBtns() {
+  const today = new Date().toISOString().split('T')[0];
+  const isClosed = localStorage.getItem('jw_closed_date') === today;
+  document.getElementById('btn-close-today').classList.toggle('hidden', isClosed);
+  document.getElementById('btn-open-today').classList.toggle('hidden', !isClosed);
+}
+
+// === BLOCKED TIMES ===
+function getBlockedTimes() {
+  return JSON.parse(localStorage.getItem('jw_blocked') || '[]');
+}
+function saveBlockedTimes(list) {
+  localStorage.setItem('jw_blocked', JSON.stringify(list));
+}
+
+function toggleBlockTime() {
+  const allDay = document.getElementById('block-allday').checked;
+  document.getElementById('block-time-range').classList.toggle('hidden', allDay);
+  document.getElementById('block-allday-btn').classList.toggle('hidden', !allDay);
+}
+
+function addBlockedTime() {
+  const date = document.getElementById('block-date').value;
+  if (!date) { showToast('날짜를 선택해주세요.', 'error'); return; }
+  const allDay = document.getElementById('block-allday').checked;
+  const list = getBlockedTimes();
+
+  if (allDay) {
+    if (list.some(b => b.date === date && b.allDay)) { showToast('이미 하루 종일 불가로 설정됐습니다.', 'warn'); return; }
+    const d = new Date(date);
+    const days = ['일','월','화','수','목','금','토'];
+    const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]}) 하루 종일`;
+    list.push({ date, allDay: true, label });
+  } else {
+    const sh = parseInt(document.getElementById('block-start-hour').value);
+    const sm = parseInt(document.getElementById('block-start-min').value);
+    const eh = parseInt(document.getElementById('block-end-hour').value);
+    const em = parseInt(document.getElementById('block-end-min').value);
+    if (sh * 60 + sm >= eh * 60 + em) { showToast('종료 시간이 시작 시간보다 늦어야 합니다.', 'error'); return; }
+    const fmt = (h, m) => {
+      const ap = h >= 12 ? '오후' : '오전';
+      const hh = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+      return `${ap} ${hh}:${String(m).padStart(2,'0')}`;
+    };
+    const d = new Date(date);
+    const days = ['일','월','화','수','목','금','토'];
+    const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]}) ${fmt(sh,sm)}~${fmt(eh,em)}`;
+    list.push({ date, allDay: false, startHour: sh, startMin: sm, endHour: eh, endMin: em, label });
+  }
+  list.sort((a, b) => a.date.localeCompare(b.date));
+  saveBlockedTimes(list);
+  renderBlockedTimes();
+  showToast('예약 불가 시간이 설정됐습니다.');
+}
+
+function removeBlockedTime(idx) {
+  const list = getBlockedTimes();
+  list.splice(idx, 1);
+  saveBlockedTimes(list);
+  renderBlockedTimes();
+  showToast('예약 불가 설정이 해제됐습니다.', 'warn');
+}
+
+function renderBlockedTimes() {
+  const list = getBlockedTimes();
+  const container = document.getElementById('blocked-times-list');
+  if (list.length === 0) {
+    container.innerHTML = '<p class="text-sm text-on-surface-variant/50 italic text-center py-3">설정된 예약 불가 시간이 없습니다.</p>';
+    return;
+  }
+  container.innerHTML = list.map((b, i) => `
+    <div class="flex justify-between items-center px-4 py-3 bg-error-container/30 rounded-xl border border-error/20">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-base text-error">event_busy</span>
+        <span class="font-semibold text-sm text-on-surface">${b.label}</span>
+      </div>
+      <button onclick="removeBlockedTime(${i})" class="text-xs font-bold px-3 py-1.5 bg-error text-white rounded-lg active:scale-95 transition-transform hover:opacity-80">해제</button>
+    </div>
+  `).join('');
+}
+
+function initBlockPickers() {
+  ['block-start-hour','block-end-hour'].forEach(id => {
+    const sel = document.getElementById(id);
+    for (let h = 0; h <= 23; h++) {
+      const opt = document.createElement('option');
+      opt.value = h; opt.textContent = `${String(h).padStart(2,'0')}시`;
+      sel.appendChild(opt);
+    }
+  });
+  ['block-start-min','block-end-min'].forEach(id => {
+    const sel = document.getElementById(id);
+    for (let m = 0; m < 60; m += 5) {
+      const opt = document.createElement('option');
+      opt.value = m; opt.textContent = `${String(m).padStart(2,'0')}분`;
+      sel.appendChild(opt);
+    }
+  });
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('block-date').value = today;
+  document.getElementById('block-date').min = today;
+  document.getElementById('block-end-hour').value = 13;
+}
+
+// === RESERVATION TIME SLOTS ===
+function getTimeSlots() {
+  return JSON.parse(localStorage.getItem('jw_time_slots') || '[]');
+}
+
+function saveTimeSlots(slots) {
+  localStorage.setItem('jw_time_slots', JSON.stringify(slots));
+}
+
+function formatSlotLabel(date, hour, min) {
+  const d = new Date(`${date}T${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}:00`);
+  const days = ['일','월','화','수','목','금','토'];
+  const ampm = d.getHours() >= 12 ? '오후' : '오전';
+  const h = d.getHours() > 12 ? d.getHours() - 12 : (d.getHours() === 0 ? 12 : d.getHours());
+  return `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]}) ${ampm} ${h}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function addTimeSlot() {
+  const date = document.getElementById('slot-date').value;
+  const hour = parseInt(document.getElementById('slot-hour').value);
+  const min  = parseInt(document.getElementById('slot-min').value);
+  if (!date) { showToast('날짜를 선택해주세요.', 'error'); return; }
+
+  const totalMin = hour * 60 + min;
+  if (totalMin < 9 * 60) { showToast('영업 시작 전입니다. (오전 9:00 이후)', 'error'); return; }
+  if (totalMin > 18 * 60 + 40) { showToast('영업 마감 이후입니다. (오후 6:40 이전)', 'error'); return; }
+  if (hour === 12) { showToast('점심시간입니다. (12:00~13:00 예약 불가)', 'error'); return; }
+
+  const slots = getTimeSlots();
+  if (slots.some(s => s.date === date && s.hour === hour && s.min === min)) {
+    showToast('이미 추가된 시간입니다.', 'warn'); return;
+  }
+  const label = formatSlotLabel(date, hour, min);
+  slots.push({ date, hour, min, label });
+  slots.sort((a, b) => a.date !== b.date ? a.date.localeCompare(b.date) : (a.hour*60+a.min) - (b.hour*60+b.min));
+  saveTimeSlots(slots);
+  renderTimeSlots();
+  showToast(`${label} 추가됐습니다.`);
+}
+
+function removeTimeSlot(idx) {
+  const slots = getTimeSlots();
+  const label = slots[idx].label;
+  slots.splice(idx, 1);
+  saveTimeSlots(slots);
+  renderTimeSlots();
+  showToast(`${label} 삭제됐습니다.`, 'warn');
+}
+
+function renderTimeSlots() {
+  const slots = getTimeSlots();
+  const container = document.getElementById('time-slots-list');
+  if (slots.length === 0) {
+    container.innerHTML = '<p class="text-sm text-on-surface-variant/50 italic text-center py-3">추가된 예약 시간이 없습니다. 위에서 날짜·시간을 선택해 추가하세요.</p>';
+    return;
+  }
+  container.innerHTML = slots.map((s, i) => `
+    <div class="flex justify-between items-center px-4 py-3 bg-surface-container rounded-xl">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-base text-primary">schedule</span>
+        <span class="font-semibold text-sm">${s.label}</span>
+      </div>
+      <button onclick="removeTimeSlot(${i})" class="text-xs font-bold px-3 py-1.5 bg-error-container text-on-error-container rounded-lg active:scale-95 transition-transform hover:opacity-80">삭제</button>
+    </div>
+  `).join('');
+}
+
+function initSlotPickers() {
+  const hourSel = document.getElementById('slot-hour');
+  const minSel  = document.getElementById('slot-min');
+  for (let h = 0; h <= 23; h++) {
+    const opt = document.createElement('option');
+    opt.value = h;
+    opt.textContent = `${h < 10 ? '0'+h : h}시`;
+    hourSel.appendChild(opt);
+  }
+  for (let m = 0; m < 60; m += 5) {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = `${m < 10 ? '0'+m : m}분`;
+    minSel.appendChild(opt);
+  }
+  // Default: today, current time rounded to next 5min
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  document.getElementById('slot-date').value = today;
+  document.getElementById('slot-date').min = today;
+  const roundedMin = Math.ceil(now.getMinutes() / 5) * 5 % 60;
+  const roundedHour = now.getHours() + (Math.ceil(now.getMinutes() / 5) * 5 >= 60 ? 1 : 0);
+  hourSel.value = Math.min(roundedHour, 23);
+  minSel.value = roundedMin;
+}
+
+// === SALES DASHBOARD ===
+let currentSalesTab = 'daily';
+
+function switchSalesTab(tab) {
+  currentSalesTab = tab;
+  const daily = document.getElementById('sales-tab-daily');
+  const monthly = document.getElementById('sales-tab-monthly');
+  if (tab === 'daily') {
+    daily.className = 'px-5 py-2 rounded-full bg-primary text-white font-bold text-sm';
+    monthly.className = 'px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-bold text-sm hover:bg-surface-container-highest transition-colors';
+  } else {
+    monthly.className = 'px-5 py-2 rounded-full bg-primary text-white font-bold text-sm';
+    daily.className = 'px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-bold text-sm hover:bg-surface-container-highest transition-colors';
+  }
+  renderSales();
+}
+
+function getSalesData() {
+  const orders = getOrders();
+  const byDate = {};
+  orders.forEach(o => {
+    const date = new Date(o.timestamp).toISOString().split('T')[0];
+    if (!byDate[date]) byDate[date] = { total: 0, count: 0 };
+    byDate[date].total += (o.total || 0);
+    byDate[date].count += 1;
+  });
+  return byDate;
+}
+
+function renderSales() {
+  const container = document.getElementById('sales-content');
+  const byDate = getSalesData();
+  const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
+
+  if (currentSalesTab === 'daily') {
+    if (dates.length === 0) {
+      container.innerHTML = '<p class="text-sm text-on-surface-variant/50 italic text-center py-6">매출 데이터가 없습니다.</p>';
+      return;
+    }
+    const days = ['일','월','화','수','목','금','토'];
+    const maxTotal = Math.max(...dates.map(d => byDate[d].total)) || 1;
+    container.innerHTML = `
+      <div class="space-y-3">
+        ${dates.slice(0, 14).map(date => {
+          const { total, count } = byDate[date];
+          const d = new Date(date + 'T00:00:00');
+          const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+          const barPct = Math.round((total / maxTotal) * 100);
+          const today = new Date().toISOString().split('T')[0];
+          const isToday = date === today;
+          return `
+            <div class="flex items-center gap-4">
+              <span class="text-sm font-bold text-on-surface-variant w-20 flex-none ${isToday ? 'text-primary' : ''}">${label}${isToday ? ' <span class="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full ml-1">오늘</span>' : ''}</span>
+              <div class="flex-1 relative h-8 bg-surface-container rounded-lg overflow-hidden">
+                <div class="h-full ${isToday ? 'bg-primary' : 'bg-primary/40'} transition-all duration-500 rounded-lg" style="width:${barPct}%"></div>
+              </div>
+              <div class="text-right flex-none w-28">
+                <span class="text-sm font-extrabold text-on-surface">₩${total.toLocaleString()}</span>
+                <span class="text-xs text-on-surface-variant ml-1">${count}건</span>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+  } else {
+    // Monthly
+    const byMonth = {};
+    dates.forEach(date => {
+      const month = date.slice(0, 7);
+      if (!byMonth[month]) byMonth[month] = { total: 0, count: 0, days: new Set() };
+      byMonth[month].total += byDate[date].total;
+      byMonth[month].count += byDate[date].count;
+      byMonth[month].days.add(date);
+    });
+    const months = Object.keys(byMonth).sort((a, b) => b.localeCompare(a));
+    if (months.length === 0) {
+      container.innerHTML = '<p class="text-sm text-on-surface-variant/50 italic text-center py-6">매출 데이터가 없습니다.</p>';
+      return;
+    }
+    const maxTotal = Math.max(...months.map(m => byMonth[m].total)) || 1;
+    container.innerHTML = `
+      <div class="space-y-4">
+        ${months.map(month => {
+          const { total, count, days } = byMonth[month];
+          const [y, mo] = month.split('-');
+          const label = `${y}년 ${parseInt(mo)}월`;
+          const barPct = Math.round((total / maxTotal) * 100);
+          const avgPerDay = days.size > 0 ? Math.round(total / days.size) : 0;
+          const thisMonth = new Date().toISOString().slice(0, 7);
+          const isCurrent = month === thisMonth;
+          return `
+            <div class="p-4 rounded-xl border ${isCurrent ? 'border-primary/30 bg-primary-container/10' : 'border-outline-variant bg-surface-container'}">
+              <div class="flex justify-between items-start mb-3">
+                <span class="font-extrabold text-base ${isCurrent ? 'text-primary' : 'text-on-surface'}">${label}${isCurrent ? ' <span class="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full ml-1">이번달</span>' : ''}</span>
+                <div class="text-right">
+                  <p class="text-lg font-extrabold text-on-surface">₩${total.toLocaleString()}</p>
+                  <p class="text-xs text-on-surface-variant">${count}건 · 일평균 ₩${avgPerDay.toLocaleString()}</p>
+                </div>
+              </div>
+              <div class="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden">
+                <div class="h-full ${isCurrent ? 'bg-primary' : 'bg-primary/50'} transition-all duration-500 rounded-full" style="width:${barPct}%"></div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+  }
+}
+
 // === INIT ===
 loadDeliveryTime();
 renderTabs();
 renderOrderCards();
 updateStats();
 prevNewCount = getOrders().filter(o => o.status === 'new').length;
+initSlotPickers();
+renderTimeSlots();
+initBlockPickers();
+renderBlockedTimes();
+updateCloseBtns();
+
+renderSales();
 
 // Poll for new orders every 10 seconds
 setInterval(() => {
@@ -551,6 +1010,7 @@ setInterval(() => {
   renderTabs();
   renderOrderCards();
   updateStats();
+  renderSales();
 }, 10000);
 </script>
 </body>
