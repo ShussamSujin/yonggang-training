@@ -497,14 +497,57 @@ function showToast(msg, type = 'success') {
   }, 2500);
 }
 
+// === SOUND NOTIFICATION ===
+let prevNewCount = 0;
+
+function playOrderSound() {
+  // 차임 소리 (Web Audio API)
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    const start = ctx.currentTime + i * 0.18;
+    gain.gain.setValueAtTime(0, start);
+    gain.gain.linearRampToValueAtTime(0.35, start + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+    osc.start(start);
+    osc.stop(start + 0.5);
+  });
+
+  // 음 재생 후 음성 안내
+  setTimeout(() => {
+    const utter = new SpeechSynthesisUtterance('주문이 들어왔어요');
+    utter.lang = 'ko-KR';
+    utter.rate = 0.95;
+    utter.pitch = 1.1;
+    speechSynthesis.speak(utter);
+  }, notes.length * 180 + 100);
+}
+
+function checkNewOrders() {
+  const orders = getOrders();
+  const newCount = orders.filter(o => o.status === 'new').length;
+  if (newCount > prevNewCount) {
+    playOrderSound();
+  }
+  prevNewCount = newCount;
+}
+
 // === INIT ===
 loadDeliveryTime();
 renderTabs();
 renderOrderCards();
 updateStats();
+prevNewCount = getOrders().filter(o => o.status === 'new').length;
 
 // Poll for new orders every 10 seconds
 setInterval(() => {
+  checkNewOrders();
   renderTabs();
   renderOrderCards();
   updateStats();

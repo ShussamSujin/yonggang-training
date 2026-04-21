@@ -228,14 +228,10 @@
           <label class="text-sm font-bold text-on-surface-variant uppercase tracking-widest ml-1">예약 시간</label>
           <div class="relative">
             <select id="select-time" class="w-full bg-surface-container-highest border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary-fixed-dim appearance-none transition-all">
-              <option>매장 상황에 따라 20-30분 소요</option>
-              <option>1시간 후</option>
-              <option>오후 6:00</option>
-              <option>오후 7:00</option>
-              <option>오후 8:00</option>
             </select>
             <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">schedule</span>
           </div>
+          <p id="time-unavailable" class="hidden text-sm text-error font-semibold ml-1">오늘 예약 가능한 시간이 없습니다. (마감: 오후 6:40)</p>
         </div>
       </div>
     </div>
@@ -503,7 +499,47 @@ function navTo(page) {
   }
 }
 
+function buildTimeSlots() {
+  const select = document.getElementById('select-time');
+  const unavailable = document.getElementById('time-unavailable');
+
+  const LAST_HOUR = 18, LAST_MIN = 40;   // 오후 6:40
+  const INTERVAL = 20;                   // 20분 간격
+  const LEAD_MINUTES = 120;              // 2시간 후부터
+
+  const now = new Date();
+  const earliest = new Date(now.getTime() + LEAD_MINUTES * 60000);
+
+  // 시작 슬롯: earliest를 INTERVAL 단위로 올림
+  const startMin = Math.ceil((earliest.getHours() * 60 + earliest.getMinutes()) / INTERVAL) * INTERVAL;
+
+  const slots = [];
+  for (let m = startMin; ; m += INTERVAL) {
+    const h = Math.floor(m / 60);
+    const min = m % 60;
+    if (h > LAST_HOUR || (h === LAST_HOUR && min > LAST_MIN)) break;
+    const label = `오후 ${h}:${String(min).padStart(2, '0')}`;
+    slots.push({ value: `${h}:${String(min).padStart(2, '0')}`, label });
+  }
+
+  select.innerHTML = '';
+  if (slots.length === 0) {
+    unavailable.classList.remove('hidden');
+    select.classList.add('hidden');
+  } else {
+    unavailable.classList.add('hidden');
+    select.classList.remove('hidden');
+    slots.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.value;
+      opt.textContent = s.label;
+      select.appendChild(opt);
+    });
+  }
+}
+
 // Init
+buildTimeSlots();
 updateCartUI();
 </script>
 </body>
