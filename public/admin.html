@@ -239,14 +239,19 @@
 
   <!-- Sales Dashboard -->
   <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="bg-primary-container p-2 rounded-lg">
-        <span class="material-symbols-outlined text-3xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+    <div class="flex items-center justify-between gap-3 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="bg-primary-container p-2 rounded-lg">
+          <span class="material-symbols-outlined text-3xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+        </div>
+        <div>
+          <h3 class="text-lg font-extrabold text-on-surface">매출 대시보드</h3>
+          <p class="text-sm text-on-surface-variant font-medium">일별·월별 매출을 한눈에 확인하세요.</p>
+        </div>
       </div>
-      <div>
-        <h3 class="text-lg font-extrabold text-on-surface">매출 대시보드</h3>
-        <p class="text-sm text-on-surface-variant font-medium">일별·월별 매출을 한눈에 확인하세요.</p>
-      </div>
+      <button onclick="resetSales()" class="flex items-center gap-1.5 px-4 py-2 bg-error-container text-on-error-container font-bold text-sm rounded-xl active:scale-95 transition-transform hover:opacity-80">
+        <span class="material-symbols-outlined text-base">delete_sweep</span>매출 초기화
+      </button>
     </div>
     <!-- Sales tabs -->
     <div class="flex gap-2 mb-6">
@@ -505,19 +510,50 @@ function getActionButtons(order) {
   }
   if (order.status === 'cooking') {
     return `
-      <button onclick="advanceOrder('${order.id}', 'delivery')" class="w-full py-3 bg-amber-500 text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 hover:opacity-90">
-        <span class="material-symbols-outlined text-base">local_shipping</span>
-        조리 완료 → 배달 시작
-      </button>`;
+      <div class="flex gap-2">
+        <button onclick="advanceOrder('${order.id}', 'delivery')" class="flex-1 py-3 bg-amber-500 text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 hover:opacity-90">
+          <span class="material-symbols-outlined text-base">local_shipping</span>조리 완료 → 배달 시작
+        </button>
+        <button onclick="deleteOrder('${order.id}')" class="py-3 px-4 bg-surface-container-high text-error font-bold rounded-xl active:scale-95 transition-transform hover:bg-error-container" title="주문 삭제">
+          <span class="material-symbols-outlined text-base">delete</span>
+        </button>
+      </div>`;
   }
   if (order.status === 'delivery') {
     return `
-      <button onclick="advanceOrder('${order.id}', 'completed')" class="w-full py-3 bg-on-surface text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 hover:opacity-90">
-        <span class="material-symbols-outlined text-base">check_circle</span>
-        배달 완료 처리
-      </button>`;
+      <div class="flex gap-2">
+        <button onclick="advanceOrder('${order.id}', 'completed')" class="flex-1 py-3 bg-on-surface text-white font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 hover:opacity-90">
+          <span class="material-symbols-outlined text-base">check_circle</span>배달 완료 처리
+        </button>
+        <button onclick="deleteOrder('${order.id}')" class="py-3 px-4 bg-surface-container-high text-error font-bold rounded-xl active:scale-95 transition-transform hover:bg-error-container" title="주문 삭제">
+          <span class="material-symbols-outlined text-base">delete</span>
+        </button>
+      </div>`;
   }
-  return `<div class="py-2 text-center text-sm text-on-surface-variant font-semibold flex items-center justify-center gap-1"><span class="material-symbols-outlined text-base text-primary">verified</span> 주문 완료</div>`;
+  return `
+    <div class="flex gap-2 items-center">
+      <div class="flex-1 py-2 text-center text-sm text-on-surface-variant font-semibold flex items-center justify-center gap-1">
+        <span class="material-symbols-outlined text-base text-primary">verified</span> 주문 완료
+      </div>
+      <button onclick="deleteOrder('${order.id}')" class="py-3 px-4 bg-surface-container-high text-error font-bold rounded-xl active:scale-95 transition-transform hover:bg-error-container" title="주문 삭제">
+        <span class="material-symbols-outlined text-base">delete</span>
+      </button>
+    </div>`;
+}
+
+function deleteOrder(id) {
+  const orders = getOrders();
+  const idx = orders.findIndex(o => o.id === id);
+  if (idx < 0) return;
+  const name = orders[idx].customer;
+  if (!confirm(`${name} 고객님의 주문을 삭제하시겠습니까?`)) return;
+  orders.splice(idx, 1);
+  saveOrders(orders);
+  showToast(`${name} 고객님 주문이 삭제됐습니다.`, 'warn');
+  renderTabs();
+  renderOrderCards();
+  updateStats();
+  renderSales();
 }
 
 // === ORDER ACTIONS ===
@@ -885,6 +921,7 @@ function initSlotPickers() {
 
 // === SALES DASHBOARD ===
 let currentSalesTab = 'daily';
+let expandedDates = new Set();
 
 function switchSalesTab(tab) {
   currentSalesTab = tab;
@@ -900,52 +937,93 @@ function switchSalesTab(tab) {
   renderSales();
 }
 
+function toggleDayExpand(date) {
+  if (expandedDates.has(date)) expandedDates.delete(date);
+  else expandedDates.add(date);
+  renderSales();
+}
+
 function getSalesData() {
   const orders = getOrders();
   const byDate = {};
   orders.forEach(o => {
     const date = new Date(o.timestamp).toISOString().split('T')[0];
-    if (!byDate[date]) byDate[date] = { total: 0, count: 0 };
+    if (!byDate[date]) byDate[date] = { total: 0, count: 0, orders: [] };
     byDate[date].total += (o.total || 0);
     byDate[date].count += 1;
+    byDate[date].orders.push(o);
   });
   return byDate;
+}
+
+function resetSales() {
+  if (!confirm('모든 주문 내역과 매출 데이터가 삭제됩니다.\n이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?')) return;
+  localStorage.removeItem('jw_orders');
+  showToast('매출 데이터가 초기화됐습니다.', 'warn');
+  renderTabs();
+  renderOrderCards();
+  updateStats();
+  renderSales();
 }
 
 function renderSales() {
   const container = document.getElementById('sales-content');
   const byDate = getSalesData();
   const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
+  const days = ['일','월','화','수','목','금','토'];
 
   if (currentSalesTab === 'daily') {
     if (dates.length === 0) {
       container.innerHTML = '<p class="text-sm text-on-surface-variant/50 italic text-center py-6">매출 데이터가 없습니다.</p>';
       return;
     }
-    const days = ['일','월','화','수','목','금','토'];
     const maxTotal = Math.max(...dates.map(d => byDate[d].total)) || 1;
-    container.innerHTML = `
-      <div class="space-y-3">
-        ${dates.slice(0, 14).map(date => {
-          const { total, count } = byDate[date];
-          const d = new Date(date + 'T00:00:00');
-          const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
-          const barPct = Math.round((total / maxTotal) * 100);
-          const today = new Date().toISOString().split('T')[0];
-          const isToday = date === today;
+    container.innerHTML = `<div class="space-y-2">` +
+      dates.slice(0, 30).map(date => {
+        const { total, count, orders } = byDate[date];
+        const d = new Date(date + 'T00:00:00');
+        const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+        const barPct = Math.round((total / maxTotal) * 100);
+        const today = new Date().toISOString().split('T')[0];
+        const isToday = date === today;
+        const isExpanded = expandedDates.has(date);
+
+        const orderRows = orders.map(o => {
+          const items = o.items.map(i => `${i.name} ${i.qty}개`).join(', ');
+          const statusLabel = { new: '신규', cooking: '조리중', delivery: '배달중', completed: '완료' }[o.status] || o.status;
+          const statusColor = { new: 'text-primary', cooking: 'text-amber-600', delivery: 'text-tertiary', completed: 'text-on-surface-variant' }[o.status] || '';
           return `
-            <div class="flex items-center gap-4">
-              <span class="text-sm font-bold text-on-surface-variant w-20 flex-none ${isToday ? 'text-primary' : ''}">${label}${isToday ? ' <span class="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full ml-1">오늘</span>' : ''}</span>
-              <div class="flex-1 relative h-8 bg-surface-container rounded-lg overflow-hidden">
+            <div class="flex items-center justify-between px-3 py-2 bg-surface-container-lowest rounded-lg border border-outline-variant/50 text-sm gap-3">
+              <div class="min-w-0">
+                <span class="font-bold text-on-surface">${o.customer}</span>
+                <span class="text-on-surface-variant ml-2 text-xs">${items}</span>
+              </div>
+              <div class="flex items-center gap-3 flex-none">
+                <span class="text-xs font-bold ${statusColor}">${statusLabel}</span>
+                <span class="font-extrabold text-on-surface">₩${o.total.toLocaleString()}</span>
+                <button onclick="deleteOrder('${o.id}')" class="text-error hover:opacity-70 active:scale-90 transition-transform" title="삭제">
+                  <span class="material-symbols-outlined text-base">delete</span>
+                </button>
+              </div>
+            </div>`;
+        }).join('');
+
+        return `
+          <div>
+            <div onclick="toggleDayExpand('${date}')" class="flex items-center gap-3 cursor-pointer px-2 py-2 rounded-xl hover:bg-surface-container transition-colors">
+              <span class="text-sm font-bold w-20 flex-none ${isToday ? 'text-primary' : 'text-on-surface-variant'}">${label}${isToday ? `<span class="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full ml-1">오늘</span>` : ''}</span>
+              <div class="flex-1 relative h-7 bg-surface-container rounded-lg overflow-hidden">
                 <div class="h-full ${isToday ? 'bg-primary' : 'bg-primary/40'} transition-all duration-500 rounded-lg" style="width:${barPct}%"></div>
               </div>
               <div class="text-right flex-none w-28">
                 <span class="text-sm font-extrabold text-on-surface">₩${total.toLocaleString()}</span>
                 <span class="text-xs text-on-surface-variant ml-1">${count}건</span>
               </div>
-            </div>`;
-        }).join('')}
-      </div>`;
+              <span class="material-symbols-outlined text-on-surface-variant text-base flex-none">${isExpanded ? 'expand_less' : 'expand_more'}</span>
+            </div>
+            ${isExpanded ? `<div class="mt-1 mb-2 ml-24 space-y-1">${orderRows}</div>` : ''}
+          </div>`;
+      }).join('') + `</div>`;
   } else {
     // Monthly
     const byMonth = {};
@@ -962,31 +1040,29 @@ function renderSales() {
       return;
     }
     const maxTotal = Math.max(...months.map(m => byMonth[m].total)) || 1;
-    container.innerHTML = `
-      <div class="space-y-4">
-        ${months.map(month => {
-          const { total, count, days } = byMonth[month];
-          const [y, mo] = month.split('-');
-          const label = `${y}년 ${parseInt(mo)}월`;
-          const barPct = Math.round((total / maxTotal) * 100);
-          const avgPerDay = days.size > 0 ? Math.round(total / days.size) : 0;
-          const thisMonth = new Date().toISOString().slice(0, 7);
-          const isCurrent = month === thisMonth;
-          return `
-            <div class="p-4 rounded-xl border ${isCurrent ? 'border-primary/30 bg-primary-container/10' : 'border-outline-variant bg-surface-container'}">
-              <div class="flex justify-between items-start mb-3">
-                <span class="font-extrabold text-base ${isCurrent ? 'text-primary' : 'text-on-surface'}">${label}${isCurrent ? ' <span class="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full ml-1">이번달</span>' : ''}</span>
-                <div class="text-right">
-                  <p class="text-lg font-extrabold text-on-surface">₩${total.toLocaleString()}</p>
-                  <p class="text-xs text-on-surface-variant">${count}건 · 일평균 ₩${avgPerDay.toLocaleString()}</p>
-                </div>
+    container.innerHTML = `<div class="space-y-4">` +
+      months.map(month => {
+        const { total, count, days } = byMonth[month];
+        const [y, mo] = month.split('-');
+        const label = `${y}년 ${parseInt(mo)}월`;
+        const barPct = Math.round((total / maxTotal) * 100);
+        const avgPerDay = days.size > 0 ? Math.round(total / days.size) : 0;
+        const thisMonth = new Date().toISOString().slice(0, 7);
+        const isCurrent = month === thisMonth;
+        return `
+          <div class="p-4 rounded-xl border ${isCurrent ? 'border-primary/30 bg-primary-container/10' : 'border-outline-variant bg-surface-container'}">
+            <div class="flex justify-between items-start mb-3">
+              <span class="font-extrabold text-base ${isCurrent ? 'text-primary' : 'text-on-surface'}">${label}${isCurrent ? ` <span class="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full ml-1">이번달</span>` : ''}</span>
+              <div class="text-right">
+                <p class="text-lg font-extrabold text-on-surface">₩${total.toLocaleString()}</p>
+                <p class="text-xs text-on-surface-variant">${count}건 · 일평균 ₩${avgPerDay.toLocaleString()}</p>
               </div>
-              <div class="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden">
-                <div class="h-full ${isCurrent ? 'bg-primary' : 'bg-primary/50'} transition-all duration-500 rounded-full" style="width:${barPct}%"></div>
-              </div>
-            </div>`;
-        }).join('')}
-      </div>`;
+            </div>
+            <div class="w-full h-2.5 bg-surface-container-high rounded-full overflow-hidden">
+              <div class="h-full ${isCurrent ? 'bg-primary' : 'bg-primary/50'} transition-all duration-500 rounded-full" style="width:${barPct}%"></div>
+            </div>
+          </div>`;
+      }).join('') + `</div>`;
   }
 }
 
