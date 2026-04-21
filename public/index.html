@@ -183,6 +183,15 @@
     </div>
   </div>
 
+  <!-- 휴무 공지 배너 -->
+  <div id="closed-banner" class="hidden mb-8 bg-error-container rounded-xl p-6 flex items-center gap-4 border border-error/20">
+    <span class="material-symbols-outlined text-4xl text-error" style="font-variation-settings:'FILL' 1;">storefront_off</span>
+    <div>
+      <p class="text-xl font-extrabold text-on-error-container">개인 사정으로 오늘은 영업 휴무입니다.</p>
+      <p class="text-sm text-on-error-container/70 mt-1">이용에 불편을 드려 죄송합니다. 내일 다시 방문해 주세요.</p>
+    </div>
+  </div>
+
   <!-- Order Form Section -->
   <div id="order-section" class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
     <div class="space-y-12">
@@ -502,24 +511,59 @@ function navTo(page) {
 function buildTimeSlots() {
   const select = document.getElementById('select-time');
   const unavailable = document.getElementById('time-unavailable');
-
-  const LAST_HOUR = 18, LAST_MIN = 40;   // 오후 6:40
-  const INTERVAL = 20;                   // 20분 간격
-  const LEAD_MINUTES = 120;              // 2시간 후부터
+  const OPEN_HOUR = 9, OPEN_MIN = 0;
+  const CLOSE_HOUR = 18, CLOSE_MIN = 40;
+  const LAST_HOUR = CLOSE_HOUR, LAST_MIN = CLOSE_MIN;
+  const isLunch = (h, m) => h === 12; // 12:00~12:59 점심시간
 
   const now = new Date();
-  const earliest = new Date(now.getTime() + LEAD_MINUTES * 60000);
+  const leadTime = new Date(now.getTime() + 120 * 60000); // 현재 + 2시간
+  // 예약 가능 시작: 2시간 후와 영업시작 중 늦은 쪽
+  const openToday = new Date(now); openToday.setHours(OPEN_HOUR, OPEN_MIN, 0, 0);
+  const earliest = leadTime > openToday ? leadTime : openToday;
 
-  // 시작 슬롯: earliest를 INTERVAL 단위로 올림
-  const startMin = Math.ceil((earliest.getHours() * 60 + earliest.getMinutes()) / INTERVAL) * INTERVAL;
+  // 관리자가 등록한 슬롯 우선 사용
+  const adminSlots = JSON.parse(localStorage.getItem('jw_time_slots') || '[]');
+  if (adminSlots.length > 0) {
+    const valid = adminSlots.filter(s => {
+      const t = new Date(`${s.date}T${String(s.hour).padStart(2,'0')}:${String(s.min).padStart(2,'0')}:00`);
+      const afterOpen = s.hour > OPEN_HOUR || (s.hour === OPEN_HOUR && s.min >= OPEN_MIN);
+      const beforeClose = s.hour < CLOSE_HOUR || (s.hour === CLOSE_HOUR && s.min <= CLOSE_MIN);
+      return t >= earliest && afterOpen && beforeClose && !isLunch(s.hour, s.min) && !isBlocked(s.date, s.hour, s.min);
+    });
+    select.innerHTML = '';
+    if (valid.length === 0) {
+      unavailable.classList.remove('hidden');
+      select.classList.add('hidden');
+    } else {
+      unavailable.classList.add('hidden');
+      select.classList.remove('hidden');
+      valid.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = `${s.date}T${String(s.hour).padStart(2,'0')}:${String(s.min).padStart(2,'0')}`;
+        opt.textContent = s.label;
+        select.appendChild(opt);
+      });
+    }
+    return;
+  }
 
+  // 관리자 슬롯 없으면 자동 생성 (5분 간격, 오전 9:00~오후 6:40)
+  const INTERVAL = 5;
+  const earliestTotalMin = earliest.getHours() * 60 + earliest.getMinutes();
+  const openTotalMin = OPEN_HOUR * 60 + OPEN_MIN;
+  const startMin = Math.ceil(Math.max(earliestTotalMin, openTotalMin) / INTERVAL) * INTERVAL;
   const slots = [];
   for (let m = startMin; ; m += INTERVAL) {
     const h = Math.floor(m / 60);
     const min = m % 60;
     if (h > LAST_HOUR || (h === LAST_HOUR && min > LAST_MIN)) break;
-    const label = `오후 ${h}:${String(min).padStart(2, '0')}`;
-    slots.push({ value: `${h}:${String(min).padStart(2, '0')}`, label });
+    if (isLunch(h, min)) continue;
+    const todayStr = now.toISOString().split('T')[0];
+    if (isBlocked(todayStr, h, min)) continue;
+    const ampm = h >= 12 ? '오후' : '오전';
+    const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    slots.push({ value: `${h}:${String(min).padStart(2,'0')}`, label: `${ampm} ${displayH}:${String(min).padStart(2,'0')}` });
   }
 
   select.innerHTML = '';
@@ -538,7 +582,27 @@ function buildTimeSlots() {
   }
 }
 
+function checkClosed() {
+  const today = new Date().toISOString().split('T')[0];
+  const isClosed = localStorage.getItem('jw_closed_date') === today;
+  document.getElementById('closed-banner').classList.toggle('hidden', !isClosed);
+  document.getElementById('order-section').classList.toggle('hidden', isClosed);
+}
+
+function isBlocked(date, hour, min) {
+  const blocked = JSON.parse(localStorage.getItem('jw_blocked') || '[]');
+  const totalMin = hour * 60 + min;
+  return blocked.some(b => {
+    if (b.date !== date) return false;
+    if (b.allDay) return true;
+    const start = b.startHour * 60 + b.startMin;
+    const end   = b.endHour   * 60 + b.endMin;
+    return totalMin >= start && totalMin < end;
+  });
+}
+
 // Init
+checkClosed();
 buildTimeSlots();
 updateCartUI();
 </script>
