@@ -1,89 +1,510 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
-
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/11.9.1/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/11.9.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>지원통닭 - 프리미엄 치킨 주문</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "secondary-fixed-dim": "#e7bdb1",
+          "on-surface-variant": "#514533",
+          "on-tertiary-container": "#942500",
+          "secondary-fixed": "#ffdbd0",
+          "error-container": "#ffdad6",
+          "on-primary-container": "#6a4700",
+          "on-secondary-container": "#795950",
+          "on-secondary-fixed-variant": "#5d4037",
+          "on-primary-fixed-variant": "#604100",
+          "on-surface": "#1b1c1c",
+          "on-error-container": "#93000a",
+          "on-background": "#1b1c1c",
+          "on-tertiary-fixed-variant": "#872100",
+          "inverse-surface": "#303030",
+          "surface-bright": "#fcf9f8",
+          "surface-dim": "#dcd9d9",
+          "surface-container-high": "#eae7e7",
+          "primary": "#7f5600",
+          "on-secondary": "#ffffff",
+          "surface-variant": "#e5e2e1",
+          "tertiary-fixed-dim": "#ffb5a0",
+          "on-primary-fixed": "#281800",
+          "surface-container": "#f0eded",
+          "surface": "#fcf9f8",
+          "tertiary-fixed": "#ffdbd1",
+          "inverse-on-surface": "#f3f0ef",
+          "secondary": "#77574d",
+          "tertiary": "#b02e00",
+          "on-secondary-fixed": "#2c160e",
+          "secondary-container": "#fed3c7",
+          "outline": "#847560",
+          "surface-container-low": "#f6f3f2",
+          "background": "#fcf9f8",
+          "surface-container-highest": "#e5e2e1",
+          "error": "#ba1a1a",
+          "primary-fixed": "#ffdeae",
+          "surface-tint": "#7f5600",
+          "outline-variant": "#d6c4ac",
+          "on-error": "#ffffff",
+          "primary-container": "#ffb100",
+          "on-tertiary-fixed": "#3b0900",
+          "inverse-primary": "#ffba3f",
+          "primary-fixed-dim": "#ffba3f",
+          "surface-container-lowest": "#ffffff",
+          "on-tertiary": "#ffffff",
+          "tertiary-container": "#ffab94",
+          "on-primary": "#ffffff"
+        },
+        "borderRadius": {
+          "DEFAULT": "1rem",
+          "lg": "2rem",
+          "xl": "3rem",
+          "full": "9999px"
+        },
+        "fontFamily": {
+          "headline": ["Plus Jakarta Sans"],
+          "body": ["Plus Jakarta Sans"],
+          "label": ["Plus Jakarta Sans"]
         }
-      });
-    </script>
-  </body>
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .crisp-gradient { background: linear-gradient(45deg, #7f5600, #ffb100); }
+  .editorial-shadow { box-shadow: 0 40px 60px -20px rgba(27,28,28,0.08); }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcf9f8; color: #1b1c1c; min-height: max(884px, 100dvh); }
+</style>
+</head>
+<body class="bg-surface text-on-surface">
+
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fcf9f8]/80 backdrop-blur-md flex justify-between items-center px-6 py-4">
+  <div class="flex items-center gap-4">
+    <span class="material-symbols-outlined text-[#7f5600] cursor-pointer hover:opacity-80 transition-opacity">menu</span>
+    <h1 class="text-2xl font-black text-[#7f5600] italic font-['Plus_Jakarta_Sans'] tracking-tight">지원통닭</h1>
+  </div>
+  <div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+    <img alt="Owner Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmcVzQnnUNhSfqkrhydwKJXdUd0pDBaZqqoHRxFaZ6WiVGLm8B9i8tkNcgR0MIgbmVPTLfsLgiOHHbhJBiIqhnQNrw7Aa4y0thcwIXaZLuHxoTKxyhwOjtwrZ7ZzPGfLLLNtTWEe9c_vIGRls7LB68EMe2Da8clBfZAbVk72yfxZVWCBJpGB1QJscKUNNYp5e7s-buDNZuxK0cGOGmJXpLYrY1jOOAHNkOzyY01TD1F3sA8RSR89DDmE6eCWcOmg3UtBITuXf9gyrP"/>
+  </div>
+</header>
+
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+  <!-- Hero Section -->
+  <section class="relative mb-16 rounded-xl overflow-hidden h-[400px] flex items-center p-8 md:p-16">
+    <div class="absolute inset-0 z-0">
+      <img class="w-full h-full object-cover brightness-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZtwff5SY8o4t8Mt4rNHaeCXSAmy6ubT1oNPtgCzCTLM9W1mEMS4r1Fixzid2lU-MubDZlxpOE-bEYmt7ocJyUqIqPTNtR-oK3z4zSVmdELr0ezeHdcNR9V2hkAoHjev5prQ54zIm9wGH6StygzT-oIztXrfk-ED8XjpMv2s7YVrP8OqsKR0Qs2TTIJdBXJPwq76sYfvX_27IDCDPKa6Pd5lgzIxPkTSRx6xrzoHEAXcGDqxhWKrWjL92Vq-NkjL_O6kK-0kZyYXLD"/>
+    </div>
+    <div class="relative z-10 max-w-2xl">
+      <span class="inline-block px-4 py-1 rounded-full bg-primary-container text-on-primary-container text-xs font-bold uppercase tracking-widest mb-4">시그니처 맛</span>
+      <h2 class="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-6">진정한 <span class="text-primary-container italic">바삭함</span>을 경험하세요.</h2>
+      <p class="text-lg text-white/90 leading-relaxed max-w-lg">40년 전통의 레시피로 선사하는 궁극의 한국식 프라이드 치킨을 만나보세요.</p>
+    </div>
+  </section>
+
+  <!-- Menu Section -->
+  <div id="menu-section" class="mb-12 flex justify-between items-end">
+    <div>
+      <h3 class="text-3xl font-bold tracking-tight text-on-surface">메뉴 선택</h3>
+      <p class="text-on-surface-variant">완벽한 풍미를 위해 정성껏 준비했습니다.</p>
+    </div>
+    <div class="hidden md:flex gap-2">
+      <button id="btn-filter-popular" onclick="setMenuFilter('popular')"
+        class="px-6 py-2 rounded-full bg-surface-container-high text-on-surface font-semibold hover:bg-surface-container transition-colors">인기 메뉴</button>
+      <button id="btn-filter-new" onclick="setMenuFilter('new')"
+        class="px-6 py-2 rounded-full text-on-surface-variant font-semibold hover:text-primary transition-colors">신메뉴</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+    <!-- Product 1 -->
+    <div class="menu-item-card group bg-surface-container-lowest rounded-xl overflow-hidden editorial-shadow transition-transform duration-300 hover:-translate-y-2" data-is-new="false">
+      <div class="h-64 overflow-hidden relative">
+        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVlasozdwEbvb5T2VUATICm916ZSEULzJCdS_QWoLH9OW3ku4h46bQeQvCeGIf6dBlzD6ggY4Ify0GP3L-PqqZhRc9yPH39QB-3XbvW0rvwYHJReNWsMgicjGrZgOWbPTQUc9IdEXLazUIY9W5eU-MmwHtT9jmMS5USnRXfCvf9gIvF1B2yg4PSk0ZF3kiWzAl2IbFDf4QnUGbisyg7LDo3oI597ta7t9USURUxhAASQc3w7Ze6JboO5rCyftIFSwopUmaEAv_aGd5"/>
+        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary">베스트셀러</div>
+      </div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-2">
+          <h4 class="text-2xl font-bold text-on-surface">프라이드 치킨</h4>
+          <span class="text-lg font-extrabold text-primary">26,000원</span>
+        </div>
+        <p class="text-on-surface-variant text-sm mb-8 leading-relaxed">클래식의 정석. 비법 시즈닝으로 맛을 낸 겉바속촉의 진수입니다.</p>
+        <button onclick="addToCart(1)" class="w-full crisp-gradient text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+          <span class="material-symbols-outlined">shopping_bag</span>
+          장바구니 담기
+        </button>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="menu-item-card group bg-surface-container-lowest rounded-xl overflow-hidden editorial-shadow transition-transform duration-300 hover:-translate-y-2" data-is-new="false">
+      <div class="h-64 overflow-hidden relative">
+        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7b-iEnWJ9tuwjiFi0v6Io8YhiX2OJ5_wij8PMoWNCiBwiSg4u-7WMtWS4QOhccQAcq3Iqh7l4lj6FGWKLjm1OhhzT8AyH5jzqSmrFhQS08EFJSNwvC7LhObAY8wbB9K6SRfNA5uDcGWcN6Dr0HRirrZFjh8G43ahtagGNEMuKSCzNOkeKGtb2ekouGQIFKNfPP8sR4SRtsz9XwT1iVyP_E8-ZSIXsdvNGHmCcGM1Ym0rXrJx7phgZs_S7Ndsq2pn2Cd_UWWgMkCQ9"/>
+      </div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-2">
+          <h4 class="text-2xl font-bold text-on-surface">반반 치킨</h4>
+          <span class="text-lg font-extrabold text-primary">28,000원</span>
+        </div>
+        <p class="text-on-surface-variant text-sm mb-8 leading-relaxed">고민할 필요 없이! 클래식 프라이드와 달콤매콤 양념을 동시에 즐기세요.</p>
+        <button onclick="addToCart(2)" class="w-full crisp-gradient text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+          <span class="material-symbols-outlined">shopping_bag</span>
+          장바구니 담기
+        </button>
+      </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="menu-item-card group bg-surface-container-lowest rounded-xl overflow-hidden editorial-shadow transition-transform duration-300 hover:-translate-y-2" data-is-new="true">
+      <div class="h-64 overflow-hidden relative">
+        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnWie1RyvTBe7oetA07cX77h9POFXC3F6FG544jhlsUSyZKPLbe3VCC3LqGK8_nV5Rq0Jp4oZ3UNNn2rrBurVUAnGhBCByYWekQBtdQlB8iZ0zY2rC20LtiVWCo8EiPWVJ_4DgZ_guRAFaTiqBA2_cenhPSUvyt2Ik91kLoDom9X_7aUqYri9cwVH9Ta_rlBmOAp0bc3BgUqiuY9LLOk3uzVg_SbdkNSbK4Kg4chCSVJslx_2mGOCa0I4zbVZgNi7ZVXek9UPWcD1v"/>
+        <div class="absolute top-4 right-4 bg-tertiary text-white px-3 py-1 rounded-full text-xs font-bold">신메뉴</div>
+      </div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-2">
+          <h4 class="text-2xl font-bold text-on-surface">양념 치킨</h4>
+          <span class="text-lg font-extrabold text-primary">29,000원</span>
+        </div>
+        <p class="text-on-surface-variant text-sm mb-8 leading-relaxed">시그니처 고추장 소스로 버무린 달콤 매콤한 맛의 완벽한 조화입니다.</p>
+        <button onclick="addToCart(3)" class="w-full crisp-gradient text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+          <span class="material-symbols-outlined">shopping_bag</span>
+          장바구니 담기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Form Section -->
+  <div id="order-section" class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+    <div class="space-y-12">
+      <div>
+        <h3 class="text-4xl font-extrabold text-on-surface mb-4">주문 완료하기</h3>
+        <p class="text-lg text-on-surface-variant">맛있는 치킨을 준비하기 위해 몇 가지 정보가 필요합니다.</p>
+      </div>
+      <div class="space-y-6">
+        <!-- Order Type Toggle -->
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-bold text-on-surface-variant uppercase tracking-widest ml-1">주문 유형</label>
+          <div class="flex bg-surface-container-high p-1 rounded-full w-full max-w-md">
+            <button id="btn-pickup" onclick="setOrderType('pickup')"
+              class="flex-1 py-3 px-6 rounded-full bg-white text-primary font-bold shadow-sm transition-all">포장</button>
+            <button id="btn-delivery" onclick="setOrderType('delivery')"
+              class="flex-1 py-3 px-6 rounded-full text-on-surface-variant font-bold hover:text-on-surface transition-colors">배달</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-on-surface-variant uppercase tracking-widest ml-1">이름</label>
+            <input id="input-name" class="w-full bg-surface-container-highest border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="성함을 입력하세요" type="text"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-on-surface-variant uppercase tracking-widest ml-1">전화번호</label>
+            <input id="input-phone" class="w-full bg-surface-container-highest border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="010-0000-0000" type="tel"/>
+          </div>
+        </div>
+
+        <!-- Address (shown for delivery only) -->
+        <div id="address-section" class="space-y-2 hidden">
+          <label class="text-sm font-bold text-on-surface-variant uppercase tracking-widest ml-1">주소</label>
+          <input id="input-address" class="w-full bg-surface-container-highest border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="상세 주소를 입력하세요" type="text"/>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-on-surface-variant uppercase tracking-widest ml-1">요청사항</label>
+          <input id="input-note" class="w-full bg-surface-container-highest border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="예: 소스 많이, 덜 맵게 등 (선택사항)" type="text"/>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-on-surface-variant uppercase tracking-widest ml-1">예약 시간</label>
+          <div class="relative">
+            <select id="select-time" class="w-full bg-surface-container-highest border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary-fixed-dim appearance-none transition-all">
+              <option>매장 상황에 따라 20-30분 소요</option>
+              <option>1시간 후</option>
+              <option>오후 6:00</option>
+              <option>오후 7:00</option>
+              <option>오후 8:00</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">schedule</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="bg-primary-fixed/30 rounded-xl p-10 editorial-shadow">
+      <h4 class="text-2xl font-bold text-on-primary-fixed mb-8">주문 내역</h4>
+
+      <!-- Dynamic cart items -->
+      <div id="cart-items-list" class="space-y-4 mb-8">
+        <p class="text-center text-on-surface-variant/60 py-2 text-sm italic">장바구니가 비어있습니다</p>
+      </div>
+
+      <div class="flex justify-between items-center text-on-primary-fixed-variant mb-2 text-sm">
+        <span>서비스 이용료</span>
+        <span>0원</span>
+      </div>
+
+      <div class="h-px bg-on-primary-fixed/10 mb-8 mt-4"></div>
+
+      <div class="flex justify-between items-end mb-10">
+        <div>
+          <p class="text-sm text-on-primary-fixed-variant font-bold uppercase tracking-widest">총 결제 금액</p>
+          <p id="cart-total-display" class="text-4xl font-black text-primary">0원</p>
+        </div>
+        <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+      </div>
+
+      <div class="bg-white/50 rounded-xl p-4 mb-6 border border-primary/20 flex flex-col items-center gap-1">
+        <p class="text-xs font-bold text-on-primary-fixed-variant uppercase tracking-wider">입금 계좌 안내</p>
+        <p class="text-lg font-extrabold text-on-surface">601152-52-158702(농협)</p>
+        <p class="text-sm font-semibold text-primary">예금주: 조광례</p>
+      </div>
+
+      <button onclick="submitOrder()" class="w-full crisp-gradient text-white text-xl font-bold py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 active:scale-95">
+        지금 주문하기
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+      <p class="text-center text-xs text-on-primary-fixed-variant mt-6 italic">안전 결제 서비스 - 지원통닭 페이</p>
+    </div>
+  </div>
+</main>
+
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end bg-transparent z-50">
+  <div class="w-full max-w-md mx-auto flex justify-around items-end bg-white/90 backdrop-blur-2xl rounded-t-[3rem] px-4 pb-6 pt-2 shadow-[0_-10px_40px_rgba(27,28,28,0.06)]">
+    <button onclick="navTo('menu')" class="flex flex-col items-center justify-center text-stone-400 py-2 px-4 hover:text-[#ffb100] transition-colors active:scale-90">
+      <span class="material-symbols-outlined">restaurant</span>
+      <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-widest mt-1">메뉴</span>
+    </button>
+    <button onclick="navTo('order')" class="relative flex flex-col items-center justify-center bg-gradient-to-br from-[#7f5600] to-[#ffb100] text-white rounded-full py-3 px-6 transform -translate-y-2 transition-all active:scale-90">
+      <span id="cart-count-badge" class="hidden absolute -top-1 -right-1 bg-error text-white text-[10px] font-black rounded-full w-5 h-5 flex items-center justify-center">0</span>
+      <span class="material-symbols-outlined">receipt_long</span>
+      <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-widest mt-1">주문내역</span>
+    </button>
+    <button onclick="navTo('history')" class="flex flex-col items-center justify-center text-stone-400 py-2 px-4 hover:text-[#ffb100] transition-colors active:scale-90">
+      <span class="material-symbols-outlined">history</span>
+      <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-widest mt-1">히스토리</span>
+    </button>
+    <button onclick="navTo('admin')" class="flex flex-col items-center justify-center text-stone-400 py-2 px-4 hover:text-[#ffb100] transition-colors active:scale-90">
+      <span class="material-symbols-outlined">dashboard_customize</span>
+      <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-widest mt-1">관리자</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-28 left-1/2 z-[100] px-6 py-3 rounded-full text-white font-bold text-sm shadow-lg transition-all duration-300 bg-on-surface"
+  style="transform: translateX(-50%) translateY(1rem); opacity: 0; pointer-events: none;">
+  <span id="toast-msg"></span>
+</div>
+
+<!-- Success Modal -->
+<div id="order-success-modal" class="hidden fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm items-center justify-center p-6">
+  <div class="bg-surface-container-lowest rounded-xl p-10 max-w-md w-full editorial-shadow text-center">
+    <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-4xl text-on-primary-container" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+    </div>
+    <h3 class="text-3xl font-extrabold text-on-surface mb-2">주문 완료!</h3>
+    <p id="modal-order-id" class="text-sm font-bold text-primary mb-4"></p>
+    <p class="text-on-surface-variant leading-relaxed mb-8">주문이 성공적으로 접수되었습니다.<br/>사장님이 곧 확인 후 조리를 시작합니다.</p>
+    <div class="bg-primary-fixed/30 rounded-xl p-4 mb-8">
+      <p class="text-xs font-bold text-on-primary-fixed-variant uppercase tracking-wider mb-1">입금 계좌</p>
+      <p class="text-lg font-extrabold">601152-52-158702 (농협)</p>
+      <p class="text-sm font-semibold text-primary">예금주: 조광례</p>
+    </div>
+    <button onclick="closeSuccessModal()" class="w-full crisp-gradient text-white font-bold py-4 rounded-xl active:scale-95 transition-transform">
+      확인
+    </button>
+  </div>
+</div>
+
+<script>
+const menuItems = {
+  1: { id: 1, name: '프라이드 치킨', price: 26000 },
+  2: { id: 2, name: '반반 치킨', price: 28000 },
+  3: { id: 3, name: '양념 치킨', price: 29000 }
+};
+
+let cart = {};
+let orderType = 'pickup';
+
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  updateCartUI();
+  showToast(`${menuItems[id].name}을(를) 담았습니다!`);
+  setTimeout(() => {
+    document.getElementById('order-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
+function updateQty(id, delta) {
+  const newQty = (cart[id] || 0) + delta;
+  if (newQty <= 0) delete cart[id];
+  else cart[id] = newQty;
+  updateCartUI();
+}
+
+function getCartItems() {
+  return Object.entries(cart).map(([id, qty]) => ({ ...menuItems[id], qty }));
+}
+function getTotal() {
+  return Object.entries(cart).reduce((sum, [id, qty]) => sum + menuItems[id].price * qty, 0);
+}
+function getCount() {
+  return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+}
+
+function updateCartUI() {
+  const items = getCartItems();
+  const total = getTotal();
+  const count = getCount();
+
+  const listEl = document.getElementById('cart-items-list');
+  if (items.length === 0) {
+    listEl.innerHTML = '<p class="text-center text-on-surface-variant/60 py-2 text-sm italic">장바구니가 비어있습니다</p>';
+  } else {
+    listEl.innerHTML = items.map(item => `
+      <div class="flex justify-between items-center text-on-primary-fixed">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center bg-white/40 rounded-lg overflow-hidden">
+            <button onclick="updateQty(${item.id}, -1)" class="px-3 py-2 hover:bg-white/60 transition-colors font-bold text-primary text-lg leading-none">−</button>
+            <span class="px-3 font-bold text-sm min-w-[2rem] text-center">${item.qty}</span>
+            <button onclick="updateQty(${item.id}, 1)" class="px-3 py-2 hover:bg-white/60 transition-colors font-bold text-primary text-lg leading-none">+</button>
+          </div>
+          <span class="text-sm font-medium">${item.name}</span>
+        </div>
+        <span class="font-bold text-sm">${(item.price * item.qty).toLocaleString()}원</span>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('cart-total-display').textContent = `${total.toLocaleString()}원`;
+
+  const badge = document.getElementById('cart-count-badge');
+  badge.textContent = count;
+  badge.classList.toggle('hidden', count === 0);
+}
+
+function setOrderType(type) {
+  orderType = type;
+  const pickup = document.getElementById('btn-pickup');
+  const delivery = document.getElementById('btn-delivery');
+  const addrSection = document.getElementById('address-section');
+
+  if (type === 'pickup') {
+    pickup.className = 'flex-1 py-3 px-6 rounded-full bg-white text-primary font-bold shadow-sm transition-all';
+    delivery.className = 'flex-1 py-3 px-6 rounded-full text-on-surface-variant font-bold hover:text-on-surface transition-colors';
+    addrSection.classList.add('hidden');
+  } else {
+    delivery.className = 'flex-1 py-3 px-6 rounded-full bg-white text-primary font-bold shadow-sm transition-all';
+    pickup.className = 'flex-1 py-3 px-6 rounded-full text-on-surface-variant font-bold hover:text-on-surface transition-colors';
+    addrSection.classList.remove('hidden');
+  }
+}
+
+function setMenuFilter(filter) {
+  const popularBtn = document.getElementById('btn-filter-popular');
+  const newBtn = document.getElementById('btn-filter-new');
+  const cards = document.querySelectorAll('.menu-item-card');
+
+  if (filter === 'popular') {
+    popularBtn.className = 'px-6 py-2 rounded-full bg-surface-container-high text-on-surface font-semibold hover:bg-surface-container transition-colors';
+    newBtn.className = 'px-6 py-2 rounded-full text-on-surface-variant font-semibold hover:text-primary transition-colors';
+    cards.forEach(c => c.style.display = '');
+  } else {
+    newBtn.className = 'px-6 py-2 rounded-full bg-surface-container-high text-on-surface font-semibold hover:bg-surface-container transition-colors';
+    popularBtn.className = 'px-6 py-2 rounded-full text-on-surface-variant font-semibold hover:text-primary transition-colors';
+    cards.forEach(c => { c.style.display = c.dataset.isNew === 'true' ? '' : 'none'; });
+  }
+}
+
+function submitOrder() {
+  const name = document.getElementById('input-name').value.trim();
+  const phone = document.getElementById('input-phone').value.trim();
+  const address = document.getElementById('input-address').value.trim();
+  const note = document.getElementById('input-note').value.trim();
+  const timeSlot = document.getElementById('select-time').value;
+
+  if (!name) { showToast('이름을 입력해주세요.', 'error'); document.getElementById('input-name').focus(); return; }
+  if (!phone) { showToast('전화번호를 입력해주세요.', 'error'); document.getElementById('input-phone').focus(); return; }
+  if (orderType === 'delivery' && !address) { showToast('배달 주소를 입력해주세요.', 'error'); document.getElementById('input-address').focus(); return; }
+  if (getCount() === 0) { showToast('장바구니가 비어있습니다.', 'error'); return; }
+
+  const order = {
+    id: 'ORD-' + Date.now(),
+    customer: name,
+    phone,
+    address: orderType === 'delivery' ? address : '포장',
+    orderType,
+    items: getCartItems(),
+    total: getTotal(),
+    timeSlot,
+    note,
+    status: 'new',
+    timestamp: Date.now(),
+    timeLabel: '방금 전'
+  };
+
+  const orders = JSON.parse(localStorage.getItem('jw_orders') || '[]');
+  orders.unshift(order);
+  localStorage.setItem('jw_orders', JSON.stringify(orders));
+
+  document.getElementById('modal-order-id').textContent = '#' + order.id;
+  document.getElementById('order-success-modal').classList.remove('hidden');
+  document.getElementById('order-success-modal').classList.add('flex');
+
+  cart = {};
+  updateCartUI();
+  document.getElementById('input-name').value = '';
+  document.getElementById('input-phone').value = '';
+  document.getElementById('input-address').value = '';
+  document.getElementById('input-note').value = '';
+}
+
+function closeSuccessModal() {
+  document.getElementById('order-success-modal').classList.add('hidden');
+  document.getElementById('order-success-modal').classList.remove('flex');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  const msgEl = document.getElementById('toast-msg');
+  msgEl.textContent = msg;
+  toast.style.background = type === 'error' ? '#ba1a1a' : '#1b1c1c';
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(1rem)';
+  }, 2500);
+}
+
+function navTo(page) {
+  if (page === 'admin') { window.location.href = 'admin.html'; return; }
+  if (page === 'menu') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  if (page === 'order') { document.getElementById('order-section').scrollIntoView({ behavior: 'smooth' }); return; }
+  if (page === 'history') {
+    const orders = JSON.parse(localStorage.getItem('jw_orders') || '[]').filter(o => o.status === 'completed');
+    if (orders.length === 0) { showToast('완료된 주문 내역이 없습니다.'); return; }
+    showToast(`완료된 주문 ${orders.length}건이 있습니다.`);
+  }
+}
+
+// Init
+updateCartUI();
+</script>
+</body>
 </html>
