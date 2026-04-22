@@ -354,34 +354,8 @@
 </div>
 
 <script>
-// === SEED DATA ===
-const seedOrders = [
-  { id: 'seed-001', customer: '김철수', phone: '010-1234-5678', address: '서울시 강남구 테헤란로 123', orderType: 'delivery', items: [{ name: '프라이드 치킨', qty: 1, price: 26000 }, { name: '반반 치킨', qty: 1, price: 28000 }], total: 54000, timeSlot: '30-40분', note: '무 많이 주시고 배달 도착하면 벨 눌러주세요.', status: 'new', timestamp: Date.now() - 60000, timeLabel: '방금 전' },
-  { id: 'seed-002', customer: '이영희', phone: '010-9876-5432', address: '포장', orderType: 'pickup', items: [{ name: '반반 치킨', qty: 1, price: 28000 }], total: 28000, timeSlot: '20-30분', note: '', status: 'new', timestamp: Date.now() - 120000, timeLabel: '2분 전' },
-  { id: 'seed-003', customer: '박민준', phone: '010-5555-6666', address: '서울시 마포구 홍익로 88', orderType: 'delivery', items: [{ name: '양념 치킨', qty: 1, price: 29000 }], total: 29000, timeSlot: '40-50분', note: '리뷰 이벤트 참여합니다!', status: 'new', timestamp: Date.now() - 300000, timeLabel: '5분 전' },
-  { id: 'seed-004', customer: '최지수', phone: '010-7777-8888', address: '포장', orderType: 'pickup', items: [{ name: '프라이드 치킨', qty: 2, price: 52000 }], total: 52000, timeSlot: '30-40분', note: '', status: 'cooking', timestamp: Date.now() - 480000, timeLabel: '8분 전' },
-  { id: 'seed-005', customer: '정우성', phone: '010-1111-2222', address: '서울시 용산구 이태원로 5', orderType: 'delivery', items: [{ name: '양념 치킨', qty: 1, price: 29000 }], total: 29000, timeSlot: '40-50분', note: '양파 빼주세요.', status: 'cooking', timestamp: Date.now() - 720000, timeLabel: '12분 전' },
-  { id: 'seed-006', customer: '한소희', phone: '010-3333-4444', address: '서울시 성동구 왕십리로 30', orderType: 'delivery', items: [{ name: '반반 치킨', qty: 1, price: 28000 }], total: 28000, timeSlot: '30-40분', note: '', status: 'delivery', timestamp: Date.now() - 1200000, timeLabel: '20분 전' },
-  { id: 'seed-007', customer: '이준호', phone: '010-6666-7777', address: '서울시 서초구 서초대로 100', orderType: 'delivery', items: [{ name: '프라이드 치킨', qty: 1, price: 26000 }], total: 26000, timeSlot: '20-30분', note: '', status: 'delivery', timestamp: Date.now() - 1500000, timeLabel: '25분 전' },
-  { id: 'seed-008', customer: '박서준', phone: '010-2222-3333', address: '포장', orderType: 'pickup', items: [{ name: '반반 치킨', qty: 1, price: 28000 }], total: 28000, timeSlot: '20-30분', note: '', status: 'completed', timestamp: Date.now() - 3600000, timeLabel: '1시간 전' },
-  { id: 'seed-009', customer: '김민지', phone: '010-4444-5555', address: '서울시 종로구 인사동길 12', orderType: 'delivery', items: [{ name: '프라이드 치킨', qty: 1, price: 26000 }, { name: '양념 치킨', qty: 1, price: 29000 }], total: 55000, timeSlot: '40-50분', note: '인터폰 안되니 전화주세요.', status: 'completed', timestamp: Date.now() - 7200000, timeLabel: '2시간 전' },
-];
-
 function getOrders() {
-  const stored = localStorage.getItem('jw_orders');
-  if (!stored) {
-    localStorage.setItem('jw_orders', JSON.stringify(seedOrders));
-    return [...seedOrders];
-  }
-  const orders = JSON.parse(stored);
-  // Inject seeds if not present
-  const hasSeed = orders.some(o => o.id && o.id.startsWith('seed-'));
-  if (!hasSeed) {
-    const merged = [...orders, ...seedOrders];
-    localStorage.setItem('jw_orders', JSON.stringify(merged));
-    return merged;
-  }
-  return orders;
+  return JSON.parse(localStorage.getItem('jw_orders') || '[]');
 }
 
 function saveOrders(orders) {
