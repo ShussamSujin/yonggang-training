@@ -605,6 +605,15 @@ function isBlocked(date, hour, min) {
 checkClosed();
 buildTimeSlots();
 updateCartUI();
+
+// Re-check closed + blocked state every 15 seconds and on cross-tab storage changes
+setInterval(() => { checkClosed(); buildTimeSlots(); }, 15000);
+window.addEventListener('storage', e => {
+  if (e.key === 'jw_closed_date' || e.key === 'jw_blocked' || e.key === 'jw_time_slots') {
+    checkClosed();
+    buildTimeSlots();
+  }
+});
 </script>
 </body>
 </html>
